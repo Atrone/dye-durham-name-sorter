@@ -1,5 +1,6 @@
 """End-to-end tests for the name-sorter command, run against real files in a temporary folder."""
 
+import os
 import random
 import subprocess
 import sys
@@ -150,6 +151,25 @@ def test_runs_as_a_python_module(tmp_path: Path) -> None:
     assert result.returncode == 0
     assert result.stdout.splitlines() == ["Marin Alvarez", "Leo Gardner"]
     assert _read_lines(tmp_path / "sorted-names-list.txt") == ["Marin Alvarez", "Leo Gardner"]
+
+
+def test_prints_names_that_a_legacy_code_page_cannot_encode(tmp_path: Path) -> None:
+    """Names like "Łukasz" still print, and are saved, when the console uses a legacy code page."""
+    # Windows encodes redirected output as cp1252, which has no "Ł". PYTHONIOENCODING does the
+    # same on any OS, so this test catches the problem on every CI runner.
+    _write_lines(tmp_path / "names.txt", ["Łukasz Nowak", "Leo Gardner"])
+
+    result = subprocess.run(
+        [sys.executable, "-m", "name_sorter", "names.txt"],
+        cwd=tmp_path,
+        capture_output=True,
+        env={**os.environ, "PYTHONIOENCODING": "cp1252"},
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr.decode("utf-8", errors="replace")
+    assert result.stdout.decode("utf-8").splitlines() == ["Leo Gardner", "Łukasz Nowak"]
+    assert _read_lines(tmp_path / "sorted-names-list.txt") == ["Leo Gardner", "Łukasz Nowak"]
 
 
 def _write_lines(path: Path, lines: list[str]) -> None:

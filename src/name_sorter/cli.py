@@ -1,6 +1,7 @@
 """The name-sorter command: sorts the names in a file, prints them, and saves them."""
 
 import argparse
+import io
 import sys
 from collections.abc import Sequence
 from pathlib import Path
@@ -31,6 +32,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     """
     # argparse prints a usage message and exits by itself if the arguments are wrong.
     names_file = _parse_arguments(argv).names_file
+    _print_in_utf8()
     # The one place that decides which concrete reader, sort order and writers to use.
     sorter = NameSorter(
         reader=NameFileReader(names_file),
@@ -62,6 +64,17 @@ def _parse_arguments(argv: Sequence[str] | None) -> argparse.Namespace:
     # type=Path hands the reader a Path object rather than a plain string.
     parser.add_argument("names_file", type=Path, help="text file with one name per line")
     return parser.parse_args(argv)
+
+
+def _print_in_utf8() -> None:
+    """Make sure any name can be printed, whatever encoding the console defaults to.
+
+    When output is redirected on Windows, Python encodes it with a legacy code page such
+    as cp1252, which has no "Ł". Printing such a name would fail before the file is saved.
+    """
+    # Only a real text stream can be reconfigured; anything else is left as it is.
+    if isinstance(sys.stdout, io.TextIOWrapper):
+        sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _print_error(message: str) -> None:

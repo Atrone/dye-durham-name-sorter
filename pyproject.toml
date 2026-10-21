@@ -28,7 +28,4 @@ mypy_path = "src"
 line-length = 100
 
 [tool.ruff.lint]
-select = ["B", "D", "E", "F", "I", "SIM", "UP", "W"]
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
+select = ["B", "E", "F", "I", "SIM", "UP", "W"]

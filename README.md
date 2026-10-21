@@ -1,5 +1,7 @@
 # Name Sorter
 
+[![CI](https://github.com/Atrone/dye-durham-name-sorter/actions/workflows/ci.yml/badge.svg)](https://github.com/Atrone/dye-durham-name-sorter/actions/workflows/ci.yml)
+
 Sorts a list of names by last name, then by given names. The sorted names are printed to the
 screen and saved to `sorted-names-list.txt` in the current directory.
 

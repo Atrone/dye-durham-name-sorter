@@ -1,0 +1,16 @@
+# Virtual environments
+.venv/
+
+# Python caches and build output
+__pycache__/
+*.egg-info/
+build/
+dist/
+
+# Tool caches
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# Written by name-sorter when it's run from the repository root
+sorted-names-list.txt

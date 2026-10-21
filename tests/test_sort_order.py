@@ -18,9 +18,12 @@ def test_sorts_by_last_name_first() -> None:
 
 
 def test_sorts_people_with_the_same_last_name_by_their_first_given_name() -> None:
-    """When last names match, the first given name decides."""
-    # Both people are Gardners, so Ava comes before Leo.
-    assert _sort("Leo Gardner", "Ava Gardner") == ["Ava Gardner", "Leo Gardner"]
+    """When last names match, the first given name decides, whatever the later ones are."""
+    # "Zane" comes after "Adam", but "Ava" comes before "Leo", and the first given name wins.
+    assert _sort("Leo Adam Gardner", "Ava Zane Gardner") == [
+        "Ava Zane Gardner",
+        "Leo Adam Gardner",
+    ]
 
 
 def test_moves_on_to_later_given_names_when_earlier_ones_match() -> None:
